@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: spiritual-app-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/spiritual_app
+    username: app_user
+    password: password
+
+    jpa:
+      hibernate:
+        ddl-auto: validate
+      open-in-view: false
+
+    flyway:
+      enabled: true
+
+  server:
+    port: 8080
