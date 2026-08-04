@@ -2,8 +2,10 @@ package com.garveshtiwari.spiritual_app_backend.user.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
+import com.garveshtiwari.spiritual_app_backend.user.dto.UserProfileResponse;
 import com.garveshtiwari.spiritual_app_backend.user.entity.Role;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
+import com.garveshtiwari.spiritual_app_backend.user.mapper.UserMapper;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,5 +47,19 @@ public class UserServiceImpl implements UserService {
                 savedUser.getLastName(),
                 savedUser.getEmail()
         );
+    }
+
+    @Override
+    public UserProfileResponse getCurrentUser(String email) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "User not found."
+                        )
+                );
+
+        return UserMapper.toProfileResponse(user);
     }
 }
