@@ -2,6 +2,7 @@ package com.garveshtiwari.spiritual_app_backend.user.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
+import com.garveshtiwari.spiritual_app_backend.user.dto.ChangePasswordRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UpdateProfileRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UserProfileResponse;
 import com.garveshtiwari.spiritual_app_backend.user.entity.Role;
@@ -85,5 +86,39 @@ public class UserServiceImpl implements UserService {
         User updatedUser = userRepository.save(user);
 
         return UserMapper.toProfileResponse(updatedUser);
+    }
+
+    @Override
+    public void changePassword(
+            String email,
+            ChangePasswordRequest request
+    ) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "User not found."
+                        )
+                );
+
+        if (!passwordEncoder.matches(
+                request.getCurrentPassword(),
+                user.getPassword()
+        )) {
+            throw new RuntimeException(
+                    "Current password is incorrect."
+            );
+        }
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getNewPassword()
+                )
+        );
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
     }
 }

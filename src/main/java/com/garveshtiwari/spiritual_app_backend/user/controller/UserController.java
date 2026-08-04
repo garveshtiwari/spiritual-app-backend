@@ -1,5 +1,6 @@
 package com.garveshtiwari.spiritual_app_backend.user.controller;
 
+import com.garveshtiwari.spiritual_app_backend.user.dto.ChangePasswordRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UpdateProfileRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UserProfileResponse;
 import com.garveshtiwari.spiritual_app_backend.user.service.UserService;
@@ -41,6 +42,22 @@ public class UserController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody ChangePasswordRequest request
+    ) {
+
+        userService.changePassword(
+                authentication.getName(),
+                request
+        );
+
+        return ResponseEntity.ok(
+                "Password updated successfully."
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")
