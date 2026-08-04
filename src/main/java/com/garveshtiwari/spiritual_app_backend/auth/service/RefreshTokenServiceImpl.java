@@ -5,11 +5,13 @@ import com.garveshtiwari.spiritual_app_backend.auth.repository.RefreshTokenRepos
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class RefreshTokenServiceImpl
         implements RefreshTokenService {
