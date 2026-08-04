@@ -2,6 +2,7 @@ package com.garveshtiwari.spiritual_app_backend.user.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
+import com.garveshtiwari.spiritual_app_backend.user.entity.Role;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .enabled(true)
+                .role(Role.ROLE_USER)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
