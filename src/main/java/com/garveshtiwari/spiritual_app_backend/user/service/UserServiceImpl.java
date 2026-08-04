@@ -2,6 +2,7 @@ package com.garveshtiwari.spiritual_app_backend.user.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
+import com.garveshtiwari.spiritual_app_backend.user.dto.UpdateProfileRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UserProfileResponse;
 import com.garveshtiwari.spiritual_app_backend.user.entity.Role;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
@@ -61,5 +62,28 @@ public class UserServiceImpl implements UserService {
                 );
 
         return UserMapper.toProfileResponse(user);
+    }
+
+    @Override
+    public UserProfileResponse updateProfile(
+            String email,
+            UpdateProfileRequest request
+    ) {
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new RuntimeException(
+                                "User not found."
+                        )
+                );
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updatedUser = userRepository.save(user);
+
+        return UserMapper.toProfileResponse(updatedUser);
     }
 }
