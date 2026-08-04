@@ -2,6 +2,8 @@ package com.garveshtiwari.spiritual_app_backend.auth.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.*;
 import com.garveshtiwari.spiritual_app_backend.auth.entity.RefreshToken;
+import com.garveshtiwari.spiritual_app_backend.common.exception.BadRequestException;
+import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
 import com.garveshtiwari.spiritual_app_backend.common.security.JwtService;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
@@ -30,7 +32,7 @@ public class AuthenticationServiceImpl
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new BadRequestException(
                                 "Invalid credentials."
                         )
                 );
@@ -41,7 +43,7 @@ public class AuthenticationServiceImpl
         );
 
         if (!isPasswordCorrect) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Invalid credentials."
             );
         }
@@ -94,7 +96,7 @@ public class AuthenticationServiceImpl
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "User not found."
                         )
                 );

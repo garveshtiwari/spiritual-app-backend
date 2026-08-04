@@ -2,6 +2,8 @@ package com.garveshtiwari.spiritual_app_backend.auth.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.entity.RefreshToken;
 import com.garveshtiwari.spiritual_app_backend.auth.repository.RefreshTokenRepository;
+import com.garveshtiwari.spiritual_app_backend.common.exception.BadRequestException;
+import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class RefreshTokenServiceImpl
                 refreshTokenRepository
                         .findByToken(token)
                         .orElseThrow(
-                                () -> new RuntimeException(
+                                () -> new ResourceNotFoundException(
                                         "Refresh token not found."
                                 )
                         );
@@ -63,7 +65,7 @@ public class RefreshTokenServiceImpl
                     refreshToken
             );
 
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Refresh token expired."
             );
         }
@@ -85,7 +87,7 @@ public class RefreshTokenServiceImpl
         return refreshTokenRepository
                 .findByToken(token)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "Refresh token not found."
                         )
                 );

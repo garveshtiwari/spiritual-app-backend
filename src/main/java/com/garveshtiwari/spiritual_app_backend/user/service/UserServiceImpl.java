@@ -2,6 +2,8 @@ package com.garveshtiwari.spiritual_app_backend.user.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
+import com.garveshtiwari.spiritual_app_backend.common.exception.BadRequestException;
+import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
 import com.garveshtiwari.spiritual_app_backend.user.dto.ChangePasswordRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UpdateProfileRequest;
 import com.garveshtiwari.spiritual_app_backend.user.dto.UserProfileResponse;
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService {
     public RegisterResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists.");
+            throw new BadRequestException("Email already exists.");
         }
 
         User user = User.builder()
@@ -57,7 +59,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "User not found."
                         )
                 );
@@ -74,7 +76,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "User not found."
                         )
                 );
@@ -97,7 +99,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "User not found."
                         )
                 );
@@ -106,7 +108,7 @@ public class UserServiceImpl implements UserService {
                 request.getCurrentPassword(),
                 user.getPassword()
         )) {
-            throw new RuntimeException(
+            throw new BadRequestException(
                     "Current password is incorrect."
             );
         }
@@ -127,7 +129,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findByEmail(email)
                 .orElseThrow(
-                        () -> new RuntimeException(
+                        () -> new ResourceNotFoundException(
                                 "User not found."
                         )
                 );
