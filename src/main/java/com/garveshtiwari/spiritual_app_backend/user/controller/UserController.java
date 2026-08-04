@@ -60,6 +60,20 @@ public class UserController {
         );
     }
 
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> deleteAccount(
+            Authentication authentication
+    ) {
+
+        userService.deleteAccount(
+                authentication.getName()
+        );
+
+        return ResponseEntity.ok(
+                "Account deleted successfully."
+        );
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public ResponseEntity<String> adminEndpoint() {
