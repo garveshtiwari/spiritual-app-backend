@@ -2,6 +2,8 @@ package com.garveshtiwari.spiritual_app_backend.auth.controller;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginResponse;
+import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenRequest;
+import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenResponse;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.RegisterResponse;
 import com.garveshtiwari.spiritual_app_backend.auth.service.AuthenticationService;
@@ -42,6 +44,19 @@ public class AuthController {
         LoginResponse response = authenticationService.login(
                 request
         );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+
+        RefreshTokenResponse response =
+                authenticationService.refreshToken(
+                        request
+                );
 
         return ResponseEntity.ok(response);
     }

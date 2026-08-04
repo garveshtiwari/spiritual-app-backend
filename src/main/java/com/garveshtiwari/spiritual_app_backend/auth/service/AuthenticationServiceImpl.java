@@ -2,6 +2,9 @@ package com.garveshtiwari.spiritual_app_backend.auth.service;
 
 import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginRequest;
 import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginResponse;
+import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenRequest;
+import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenResponse;
+import com.garveshtiwari.spiritual_app_backend.auth.entity.RefreshToken;
 import com.garveshtiwari.spiritual_app_backend.common.security.JwtService;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
@@ -20,13 +23,17 @@ public class AuthenticationServiceImpl
 
     private final JwtService jwtService;
 
+    private final RefreshTokenService refreshTokenService;
+
     @Override
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository
                 .findByEmail(request.getEmail())
                 .orElseThrow(
-                        () -> new RuntimeException("Invalid credentials.")
+                        () -> new RuntimeException(
+                                "Invalid credentials."
+                        )
                 );
 
         boolean isPasswordCorrect = passwordEncoder.matches(
@@ -35,13 +42,43 @@ public class AuthenticationServiceImpl
         );
 
         if (!isPasswordCorrect) {
-            throw new RuntimeException("Invalid credentials.");
+            throw new RuntimeException(
+                    "Invalid credentials."
+            );
         }
 
-        String token = jwtService.generateToken(
+        String accessToken = jwtService.generateToken(
                 user.getEmail()
         );
 
-        return new LoginResponse(token);
+        RefreshToken refreshToken =
+                refreshTokenService.createRefreshToken(
+                        user
+                );
+
+        return new LoginResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(
+            RefreshTokenRequest request
+    ) {
+
+        RefreshToken refreshToken =
+                refreshTokenService.verifyExpiration(
+                        request.getRefreshToken()
+                );
+
+        String accessToken = jwtService.generateToken(
+                refreshToken.getUser().getEmail()
+        );
+
+        return new RefreshTokenResponse(
+                accessToken,
+                refreshToken.getToken()
+        );
     }
 }

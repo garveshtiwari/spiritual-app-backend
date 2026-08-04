@@ -18,6 +18,7 @@ spring:
     port: 8080
 logging:
   level:
+    org.springframework.security: INFO
     root: INFO
     com.garveshtiwari.spiritual_app_backend: DEBUG
 
