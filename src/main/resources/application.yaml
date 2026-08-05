@@ -1,21 +1,37 @@
 spring:
   application:
     name: spiritual-app-backend
+
   datasource:
     url: jdbc:postgresql://localhost:5432/spiritual_app
     username: app_user
     password: password
 
-    jpa:
-      hibernate:
-        ddl-auto: validate
-      open-in-view: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 
-    flyway:
-      enabled: true
+  flyway:
+    enabled: true
 
-  server:
-    port: 8080
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+
 logging:
   level:
     org.springframework.security: INFO
@@ -24,6 +40,7 @@ logging:
 
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
+
 jwt:
   secret: 123456789012345678901234567890123456789012345678901234567890
   expiration: 86400000

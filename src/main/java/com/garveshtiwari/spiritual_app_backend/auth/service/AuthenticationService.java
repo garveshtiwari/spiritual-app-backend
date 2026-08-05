@@ -1,10 +1,6 @@
 package com.garveshtiwari.spiritual_app_backend.auth.service;
 
-import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginRequest;
-import com.garveshtiwari.spiritual_app_backend.auth.dto.LoginResponse;
-import com.garveshtiwari.spiritual_app_backend.auth.dto.LogoutResponse;
-import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenRequest;
-import com.garveshtiwari.spiritual_app_backend.auth.dto.RefreshTokenResponse;
+import com.garveshtiwari.spiritual_app_backend.auth.dto.*;
 
 public interface AuthenticationService {
 
@@ -15,4 +11,16 @@ public interface AuthenticationService {
     );
 
     LogoutResponse logout();
+
+    void forgotPassword(
+            ForgotPasswordRequest request
+    );
+
+    void verifyOtp(
+            VerifyOtpRequest request
+    );
+
+    void resetPassword(
+            ResetPasswordRequest request
+    );
 }

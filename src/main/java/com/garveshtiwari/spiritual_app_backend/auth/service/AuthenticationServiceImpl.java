@@ -26,6 +26,8 @@ public class AuthenticationServiceImpl
 
     private final RefreshTokenService refreshTokenService;
 
+    private final OtpService otpService;
+
     @Override
     public LoginResponse login(LoginRequest request) {
 
@@ -107,6 +109,38 @@ public class AuthenticationServiceImpl
 
         return new LogoutResponse(
                 "Logged out successfully."
+        );
+    }
+
+    @Override
+    public void forgotPassword(
+            ForgotPasswordRequest request
+    ) {
+
+        otpService.generateOtp(
+                request.getEmail()
+        );
+    }
+
+    @Override
+    public void verifyOtp(
+            VerifyOtpRequest request
+    ) {
+
+        otpService.verifyOtp(
+                request.getEmail(),
+                request.getOtp()
+        );
+    }
+
+    @Override
+    public void resetPassword(
+            ResetPasswordRequest request
+    ) {
+
+        otpService.resetPassword(
+                request.getEmail(),
+                request.getNewPassword()
         );
     }
 }

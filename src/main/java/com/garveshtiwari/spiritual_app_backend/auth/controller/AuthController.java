@@ -64,4 +64,52 @@ public class AuthController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request
+    ) {
+
+        authenticationService.forgotPassword(
+                request
+        );
+
+        return ResponseEntity.ok(
+                new MessageResponse(
+                        "OTP sent successfully."
+                )
+        );
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<MessageResponse> verifyOtp(
+            @Valid @RequestBody VerifyOtpRequest request
+    ) {
+
+        authenticationService.verifyOtp(
+                request
+        );
+
+        return ResponseEntity.ok(
+                new MessageResponse(
+                        "OTP verified successfully."
+                )
+        );
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
+    ) {
+
+        authenticationService.resetPassword(
+                request
+        );
+
+        return ResponseEntity.ok(
+                new MessageResponse(
+                        "Password reset successfully."
+                )
+        );
+    }
 }
