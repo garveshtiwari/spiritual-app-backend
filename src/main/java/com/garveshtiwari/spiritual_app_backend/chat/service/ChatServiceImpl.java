@@ -12,6 +12,8 @@ import com.garveshtiwari.spiritual_app_backend.chat.repository.ChatMessageReposi
 import com.garveshtiwari.spiritual_app_backend.chat.repository.ConversationRepository;
 import com.garveshtiwari.spiritual_app_backend.common.enums.SenderType;
 import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
+import com.garveshtiwari.spiritual_app_backend.intelligence.service.AiService;
+import com.garveshtiwari.spiritual_app_backend.intelligence.service.PromptService;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,10 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMessageMapper chatMessageMapper;
 
     private final UserRepository userRepository;
+
+    private final PromptService promptService;
+
+    private final AiService aiService;
 
     private User getCurrentUser() {
 
@@ -130,20 +136,47 @@ public class ChatServiceImpl implements ChatService {
             ChatMessageRequest request
     ) {
 
+        User user = getCurrentUser();
+
         Conversation conversation =
                 getConversationByUser(
                         conversationId
                 );
 
-        ChatMessage chatMessage = ChatMessage
-                .builder()
-                .conversation(conversation)
-                .senderType(SenderType.USER)
-                .message(request.getMessage())
-                .createdAt(LocalDateTime.now())
-                .build();
+        ChatMessage userMessage =
+                ChatMessage.builder()
+                        .conversation(conversation)
+                        .senderType(SenderType.USER)
+                        .message(request.getMessage())
+                        .createdAt(LocalDateTime.now())
+                        .build();
 
-        chatMessageRepository.save(chatMessage);
+        chatMessageRepository.save(
+                userMessage
+        );
+
+        String prompt =
+                promptService.buildPrompt(
+                        user.getId(),
+                        request.getMessage()
+                );
+
+        String aiResponse =
+                aiService.generateResponse(
+                        prompt
+                );
+
+        ChatMessage assistantMessage =
+                ChatMessage.builder()
+                        .conversation(conversation)
+                        .senderType(SenderType.ASSISTANT)
+                        .message(aiResponse)
+                        .createdAt(LocalDateTime.now())
+                        .build();
+
+        chatMessageRepository.save(
+                assistantMessage
+        );
 
         conversation.setUpdatedAt(
                 LocalDateTime.now()
@@ -154,7 +187,7 @@ public class ChatServiceImpl implements ChatService {
         );
 
         return chatMessageMapper.toResponse(
-                chatMessage
+                assistantMessage
         );
     }
 

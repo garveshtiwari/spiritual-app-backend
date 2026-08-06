@@ -4,12 +4,9 @@ package com.garveshtiwari.spiritual_app_backend
 import com.garveshtiwari.spiritual_app_backend
         .common.exception.AiException;
 import com.garveshtiwari.spiritual_app_backend
-        .common.config.HttpClientConfig;
-import com.garveshtiwari.spiritual_app_backend
         .intelligence.config.OpenAiProperties;
 import com.garveshtiwari.spiritual_app_backend
         .intelligence.provider.AiProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -18,22 +15,21 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class OpenAiProvider implements AiProvider {
-
-    private final WebClient.Builder webClientBuilder;
 
     private final OpenAiProperties properties;
 
-    @Override
-    public String generateResponse(
-            String prompt
+    private final WebClient webClient;
+
+    public OpenAiProvider(
+            WebClient.Builder builder,
+            OpenAiProperties properties
     ) {
 
-        WebClient webClient = webClientBuilder
-                .baseUrl(
-                        properties.getBaseUrl()
-                )
+        this.properties = properties;
+
+        this.webClient = builder
+                .baseUrl(properties.getBaseUrl())
                 .defaultHeader(
                         HttpHeaders.AUTHORIZATION,
                         "Bearer " + properties.getApiKey()
@@ -43,28 +39,35 @@ public class OpenAiProvider implements AiProvider {
                         MediaType.APPLICATION_JSON_VALUE
                 )
                 .build();
+    }
 
-        OpenAiRequest request = OpenAiRequest
-                .builder()
-                .model(properties.getModel())
-                .messages(
-                        List.of(
-                                OpenAiRequest.Message
-                                        .builder()
-                                        .role("user")
-                                        .content(prompt)
-                                        .build()
+    @Override
+    public String generateResponse(
+            String prompt
+    ) {
+
+        OpenAiRequest request =
+                OpenAiRequest.builder()
+                        .model(properties.getModel())
+                        .messages(
+                                List.of(
+                                        OpenAiRequest.Message
+                                                .builder()
+                                                .role("user")
+                                                .content(prompt)
+                                                .build()
+                                )
                         )
-                )
-                .build();
+                        .build();
 
-        OpenAiResponse response = webClient
-                .post()
-                .uri("/v1/chat/completions")
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(OpenAiResponse.class)
-                .block();
+        OpenAiResponse response =
+                webClient
+                        .post()
+                        .uri("/v1/chat/completions")
+                        .bodyValue(request)
+                        .retrieve()
+                        .bodyToMono(OpenAiResponse.class)
+                        .block();
 
         if (response == null
                 || response.getChoices() == null
