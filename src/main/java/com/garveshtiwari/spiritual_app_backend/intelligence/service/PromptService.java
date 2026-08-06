@@ -3,7 +3,8 @@ package com.garveshtiwari.spiritual_app_backend
 
 public interface PromptService {
 
-    public String buildPrompt(
+    String buildPrompt(
+            Long userId,
             String userMessage
     );
 }

@@ -3,5 +3,12 @@ package com.garveshtiwari.spiritual_app_backend
 
 public interface PromptBuilder {
 
-    String buildPrompt(String message);
+    String buildPrompt(
+            String message
+    );
+
+    String buildPrompt(
+            String context,
+            String message
+    );
 }

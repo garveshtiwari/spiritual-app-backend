@@ -9,26 +9,43 @@ import org.springframework.stereotype.Component;
 public class ChatPromptBuilder
         implements PromptBuilder {
 
-    @Override
     public String buildPrompt(
+            String context,
             String message
     ) {
 
         return """
                 You are an intelligent spiritual assistant.
 
-                Your responsibilities are:
+                Follow these rules:
 
-                - Explain spiritual concepts.
-                - Answer questions respectfully.
-                - Provide guidance using the
-                  Bhagavad Gita and other texts.
+                - Be respectful.
+                - Be concise.
+                - Use the Bhagavad Gita when relevant.
                 - Never generate harmful content.
-                - Keep responses concise.
+
+                User context:
+
+                %s
 
                 User message:
 
                 %s
-                """.formatted(message);
+                """
+                .formatted(
+                        context,
+                        message
+                );
+    }
+
+    @Override
+    public String buildPrompt(
+            String message
+    ) {
+
+        return buildPrompt(
+                "",
+                message
+        );
     }
 }
