@@ -9,17 +9,8 @@ import java.util.Optional;
 public interface PasswordResetOtpRepository
         extends JpaRepository<PasswordResetOtp, Long> {
 
-    Optional<PasswordResetOtp> findByOtp(
-            String otp
-    );
-
     Optional<PasswordResetOtp> findByUser_Email(
             String email
-    );
-
-    Optional<PasswordResetOtp> findByUser_EmailAndOtp(
-            String email,
-            String otp
     );
 
     void deleteByUserId(

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,6 +21,10 @@ import java.time.LocalDateTime;
 public class OtpServiceImpl implements OtpService {
 
     private static final long OTP_EXPIRATION_TIME = 5;
+
+    private static final long OTP_REQUEST_COOLDOWN = 1;
+
+    private static final int MAX_ATTEMPTS = 5;
 
     private final UserRepository userRepository;
 
@@ -40,26 +45,51 @@ public class OtpServiceImpl implements OtpService {
                         )
                 );
 
-        otpRepository.deleteByUserId(
-                user.getId()
-        );
+        Optional<PasswordResetOtp> existingOtp =
+                otpRepository.findByUser_Email(email);
+
+        if (existingOtp.isPresent()) {
+
+            PasswordResetOtp otp = existingOtp.get();
+
+            if (otp.getCreatedAt()
+                    .plusMinutes(OTP_REQUEST_COOLDOWN)
+                    .isAfter(LocalDateTime.now())) {
+
+                throw new BadRequestException(
+                        "Please wait before requesting another OTP."
+                );
+            }
+
+            otpRepository.delete(otp);
+        }
 
         String otp = OtpGenerator.generateOtp();
 
         PasswordResetOtp passwordResetOtp =
                 PasswordResetOtp.builder()
-                        .otp(otp)
+                        .otp(
+                                passwordEncoder.encode(
+                                        otp
+                                )
+                        )
                         .user(user)
+                        .createdAt(
+                                LocalDateTime.now()
+                        )
                         .expiryTime(
                                 LocalDateTime.now()
                                         .plusMinutes(
                                                 OTP_EXPIRATION_TIME
                                         )
                         )
+                        .attemptCount(0)
                         .verified(false)
                         .build();
 
-        otpRepository.save(passwordResetOtp);
+        otpRepository.save(
+                passwordResetOtp
+        );
 
         emailService.sendOtp(
                 user.getEmail(),
@@ -75,13 +105,10 @@ public class OtpServiceImpl implements OtpService {
 
         PasswordResetOtp passwordResetOtp =
                 otpRepository
-                        .findByUser_EmailAndOtp(
-                                email,
-                                otp
-                        )
+                        .findByUser_Email(email)
                         .orElseThrow(
                                 () -> new ResourceNotFoundException(
-                                        "Invalid email or OTP."
+                                        "OTP not found."
                                 )
                         );
 
@@ -96,6 +123,43 @@ public class OtpServiceImpl implements OtpService {
                     "OTP has expired."
             );
         }
+
+        if (passwordResetOtp.getAttemptCount()
+                >= MAX_ATTEMPTS) {
+
+            otpRepository.delete(
+                    passwordResetOtp
+            );
+
+            throw new BadRequestException(
+                    "Maximum attempts exceeded."
+            );
+        }
+
+        boolean matches =
+                passwordEncoder.matches(
+                        otp,
+                        passwordResetOtp.getOtp()
+                );
+
+        if (!matches) {
+
+            passwordResetOtp.setAttemptCount(
+                    passwordResetOtp.getAttemptCount() + 1
+            );
+
+            otpRepository.save(
+                    passwordResetOtp
+            );
+
+            throw new BadRequestException(
+                    "Invalid OTP."
+            );
+        }
+
+        passwordResetOtp.setAttemptCount(
+                0
+        );
 
         passwordResetOtp.setVerified(
                 true
@@ -121,6 +185,18 @@ public class OtpServiceImpl implements OtpService {
                                 )
                         );
 
+        if (passwordResetOtp.getExpiryTime()
+                .isBefore(LocalDateTime.now())) {
+
+            otpRepository.delete(
+                    passwordResetOtp
+            );
+
+            throw new BadRequestException(
+                    "OTP has expired."
+            );
+        }
+
         if (!passwordResetOtp.isVerified()) {
 
             throw new BadRequestException(
@@ -140,8 +216,12 @@ public class OtpServiceImpl implements OtpService {
                 LocalDateTime.now()
         );
 
-        userRepository.save(user);
+        userRepository.save(
+                user
+        );
 
-        otpRepository.delete(passwordResetOtp);
+        otpRepository.delete(
+                passwordResetOtp
+        );
     }
 }

@@ -21,7 +21,7 @@ public class PasswordResetOtp {
 
     @Column(
             nullable = false,
-            length = 6
+            length = 255
     )
     private String otp;
 
@@ -34,8 +34,14 @@ public class PasswordResetOtp {
     private User user;
 
     @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
     private LocalDateTime expiryTime;
 
     @Column(nullable = false)
     private boolean verified;
+
+    @Column(nullable = false)
+    private Integer attemptCount;
 }
