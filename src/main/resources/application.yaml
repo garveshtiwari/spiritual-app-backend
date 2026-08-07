@@ -52,3 +52,4 @@ openai:
   api-key: ${OPENAI_API_KEY}
   model: gpt-4.1-mini
   base-url: https://api.openai.com
+  embedding-model: text-embedding-3-small

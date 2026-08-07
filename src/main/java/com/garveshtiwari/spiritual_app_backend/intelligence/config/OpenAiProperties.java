@@ -11,7 +11,9 @@ public class OpenAiProperties {
 
     private String apiKey;
 
+    private String baseUrl;
+
     private String model;
 
-    private String baseUrl;
+    private String embeddingModel;
 }
