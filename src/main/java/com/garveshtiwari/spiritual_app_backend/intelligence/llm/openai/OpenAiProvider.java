@@ -1,12 +1,12 @@
 package com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider.openai;
+        .intelligence.llm.openai;
 
 import com.garveshtiwari.spiritual_app_backend
         .common.exception.AiException;
 import com.garveshtiwari.spiritual_app_backend
         .intelligence.config.OpenAiProperties;
 import com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider.AiProvider;
+        .intelligence.llm.AiProvider;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;

@@ -1,5 +1,5 @@
 package com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider;
+        .intelligence.llm;
 
 public interface AiProvider {
 

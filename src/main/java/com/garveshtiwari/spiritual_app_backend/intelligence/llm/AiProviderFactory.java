@@ -1,10 +1,10 @@
 package com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider;
+        .intelligence.llm;
 
 import com.garveshtiwari.spiritual_app_backend
         .intelligence.config.IntelligenceProperties;
 import com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider.openai.OpenAiProvider;
+        .intelligence.llm.openai.OpenAiProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

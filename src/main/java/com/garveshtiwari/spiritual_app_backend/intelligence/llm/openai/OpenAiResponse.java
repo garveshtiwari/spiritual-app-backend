@@ -1,5 +1,5 @@
 package com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider.openai;
+        .intelligence.llm.openai;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

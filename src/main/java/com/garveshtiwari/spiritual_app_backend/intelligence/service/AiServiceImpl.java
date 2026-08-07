@@ -1,9 +1,7 @@
 package com.garveshtiwari.spiritual_app_backend
         .intelligence.service;
 
-import com.garveshtiwari.spiritual_app_backend
-        .intelligence.provider.AiProvider;
-import com.garveshtiwari.spiritual_app_backend.intelligence.provider.AiProviderFactory;
+import com.garveshtiwari.spiritual_app_backend.intelligence.llm.AiProviderFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
