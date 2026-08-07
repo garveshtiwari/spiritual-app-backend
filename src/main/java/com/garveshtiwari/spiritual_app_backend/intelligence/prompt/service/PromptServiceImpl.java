@@ -1,8 +1,8 @@
-package com.garveshtiwari.spiritual_app_backend
-        .intelligence.service;
+package com.garveshtiwari.spiritual_app_backend.intelligence.prompt.service;
 
 import com.garveshtiwari.spiritual_app_backend
         .intelligence.prompt.chat.ChatPromptBuilder;
+import com.garveshtiwari.spiritual_app_backend.intelligence.context.service.ContextService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
