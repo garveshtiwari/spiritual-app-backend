@@ -12,8 +12,8 @@ import com.garveshtiwari.spiritual_app_backend.chat.repository.ChatMessageReposi
 import com.garveshtiwari.spiritual_app_backend.chat.repository.ConversationRepository;
 import com.garveshtiwari.spiritual_app_backend.common.enums.SenderType;
 import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
-import com.garveshtiwari.spiritual_app_backend.intelligence.service.AiService;
-import com.garveshtiwari.spiritual_app_backend.intelligence.service.PromptService;
+import com.garveshtiwari.spiritual_app_backend.intelligence.llm.service.AiService;
+import com.garveshtiwari.spiritual_app_backend.intelligence.prompt.service.PromptService;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
