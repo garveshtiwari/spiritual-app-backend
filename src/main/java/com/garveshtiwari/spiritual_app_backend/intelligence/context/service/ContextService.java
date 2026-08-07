@@ -1,5 +1,4 @@
-package com.garveshtiwari.spiritual_app_backend
-        .intelligence.service;
+package com.garveshtiwari.spiritual_app_backend.intelligence.context.service;
 
 public interface ContextService {
 
