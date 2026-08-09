@@ -1,6 +1,7 @@
 package com.garveshtiwari.spiritual_app_backend
         .intelligence.llm.openai;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,8 @@ import java.util.List;
 public class OpenAiResponse {
 
     private List<Choice> choices;
+
+    private Usage usage;
 
     @Getter
     @Setter
@@ -30,5 +33,20 @@ public class OpenAiResponse {
         private String role;
 
         private String content;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class Usage {
+
+        @JsonProperty("prompt_tokens")
+        private Integer promptTokens;
+
+        @JsonProperty("completion_tokens")
+        private Integer completionTokens;
+
+        @JsonProperty("total_tokens")
+        private Integer totalTokens;
     }
 }

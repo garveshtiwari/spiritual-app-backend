@@ -19,7 +19,7 @@ public class RetrievalController {
     ) {
 
         return retrievalService.retrieve(
-                request.getQuestion()
+                request
         );
     }
 }

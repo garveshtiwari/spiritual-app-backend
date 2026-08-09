@@ -24,7 +24,9 @@ public class JournalContextBuilder
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
         List<JournalEntry> journalEntries =
@@ -66,7 +68,11 @@ public class JournalContextBuilder
             if (entry.getVerse() != null) {
 
                 context.append("Verse ID: ")
-                        .append(entry.getVerse().getId())
+                        .append(
+                                entry
+                                        .getVerse()
+                                        .getId()
+                        )
                         .append("\n");
             }
 

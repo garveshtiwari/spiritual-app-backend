@@ -13,6 +13,10 @@ public interface UserPreferredBookRepository
             Long userPreferenceId
     );
 
+    List<UserPreferredBook> findByUserPreferenceUserId(
+            Long userId
+    );
+
     Optional<UserPreferredBook>
     findByUserPreferenceIdAndBookId(
             Long userPreferenceId,

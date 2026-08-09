@@ -1,4 +1,5 @@
-package com.garveshtiwari.spiritual_app_backend.intelligence.context.service;
+package com.garveshtiwari.spiritual_app_backend
+        .intelligence.context.service;
 
 import com.garveshtiwari.spiritual_app_backend
         .intelligence.context.ContextBuilder;
@@ -17,7 +18,9 @@ public class ContextServiceImpl
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
         StringBuilder context =
@@ -28,14 +31,16 @@ public class ContextServiceImpl
 
             String result =
                     builder.buildContext(
-                            userId
+                            userId,
+                            conversationId,
+                            userMessage
                     );
 
             if (result != null &&
                     !result.isBlank()) {
 
-                context.append(result);
-                context.append("\n");
+                context.append(result)
+                        .append("\n");
             }
         }
 

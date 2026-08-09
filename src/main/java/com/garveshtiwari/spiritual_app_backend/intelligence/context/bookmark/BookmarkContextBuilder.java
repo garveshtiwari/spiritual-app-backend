@@ -19,11 +19,14 @@ public class BookmarkContextBuilder
 
     private static final int LIMIT = 5;
 
-    private final BookmarkRepository bookmarkRepository;
+    private final BookmarkRepository
+            bookmarkRepository;
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
         List<Bookmark> bookmarks =
@@ -51,25 +54,24 @@ public class BookmarkContextBuilder
 
         for (int i = 0; i < count; i++) {
 
-            Bookmark bookmark = bookmarks.get(i);
+            Bookmark bookmark =
+                    bookmarks.get(i);
 
-            context.append(
-                    "Verse ID: "
-            ).append(
-                    bookmark.getVerse().getId()
-            ).append(
-                    "\n"
-            );
+            context.append("Verse ID: ")
+                    .append(
+                            bookmark
+                                    .getVerse()
+                                    .getId()
+                    )
+                    .append("\n");
 
             if (bookmark.getNote() != null) {
 
-                context.append(
-                        "Note: "
-                ).append(
-                        bookmark.getNote()
-                ).append(
-                        "\n"
-                );
+                context.append("Note: ")
+                        .append(
+                                bookmark.getNote()
+                        )
+                        .append("\n");
             }
 
             context.append("\n");

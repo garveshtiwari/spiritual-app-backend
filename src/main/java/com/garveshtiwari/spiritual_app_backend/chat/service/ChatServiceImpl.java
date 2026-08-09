@@ -12,41 +12,52 @@ import com.garveshtiwari.spiritual_app_backend.chat.repository.ChatMessageReposi
 import com.garveshtiwari.spiritual_app_backend.chat.repository.ConversationRepository;
 import com.garveshtiwari.spiritual_app_backend.common.enums.SenderType;
 import com.garveshtiwari.spiritual_app_backend.common.exception.ResourceNotFoundException;
-import com.garveshtiwari.spiritual_app_backend.intelligence.llm.service.AiService;
-import com.garveshtiwari.spiritual_app_backend.intelligence.prompt.service.PromptService;
+import com.garveshtiwari.spiritual_app_backend.intelligence.chat.service.ChatAiService;
+import com.garveshtiwari.spiritual_app_backend.intelligence.memory.pipeline.KnowledgePipelineService;
 import com.garveshtiwari.spiritual_app_backend.user.entity.User;
 import com.garveshtiwari.spiritual_app_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    private final ConversationRepository conversationRepository;
+    private final ConversationRepository
+            conversationRepository;
 
-    private final ChatMessageRepository chatMessageRepository;
+    private final ChatMessageRepository
+            chatMessageRepository;
 
-    private final ConversationMapper conversationMapper;
+    private final ConversationMapper
+            conversationMapper;
 
-    private final ChatMessageMapper chatMessageMapper;
+    private final ChatMessageMapper
+            chatMessageMapper;
 
-    private final UserRepository userRepository;
+    private final UserRepository
+            userRepository;
 
-    private final PromptService promptService;
+    private final ChatAiService
+            chatAiService;
 
-    private final AiService aiService;
+    private final KnowledgePipelineService
+            knowledgePipelineService;
+
 
     private User getCurrentUser() {
 
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
+        String email =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getName();
 
         return userRepository
                 .findByEmail(email)
@@ -57,11 +68,13 @@ public class ChatServiceImpl implements ChatService {
                 );
     }
 
+
     private Conversation getConversationByUser(
             Long conversationId
     ) {
 
-        User user = getCurrentUser();
+        User user =
+                getCurrentUser();
 
         return conversationRepository
                 .findByIdAndUserId(
@@ -75,32 +88,42 @@ public class ChatServiceImpl implements ChatService {
                 );
     }
 
+
     @Override
     public ConversationResponse createConversation(
             ConversationRequest request
     ) {
 
-        User user = getCurrentUser();
+        User user =
+                getCurrentUser();
 
-        Conversation conversation = Conversation
-                .builder()
-                .user(user)
-                .title(request.getTitle())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+        LocalDateTime now =
+                LocalDateTime.now();
 
-        conversationRepository.save(conversation);
+        Conversation conversation =
+                Conversation
+                        .builder()
+                        .user(user)
+                        .title(request.getTitle())
+                        .createdAt(now)
+                        .updatedAt(now)
+                        .build();
+
+        conversationRepository.save(
+                conversation
+        );
 
         return conversationMapper.toResponse(
                 conversation
         );
     }
 
+
     @Override
     public List<ConversationResponse> getConversations() {
 
-        User user = getCurrentUser();
+        User user =
+                getCurrentUser();
 
         return conversationRepository
                 .findByUserIdOrderByUpdatedAtDesc(
@@ -110,6 +133,7 @@ public class ChatServiceImpl implements ChatService {
                 .map(conversationMapper::toResponse)
                 .toList();
     }
+
 
     @Override
     public List<ChatMessageResponse> getMessages(
@@ -130,53 +154,126 @@ public class ChatServiceImpl implements ChatService {
                 .toList();
     }
 
+
     @Override
     public ChatMessageResponse sendMessage(
             Long conversationId,
             ChatMessageRequest request
     ) {
 
-        User user = getCurrentUser();
+        long totalStart =
+                System.currentTimeMillis();
+
+        User user =
+                getCurrentUser();
 
         Conversation conversation =
                 getConversationByUser(
                         conversationId
                 );
 
+
+        /*
+         * ---------------------------------------------------------
+         * SAVE USER MESSAGE
+         * ---------------------------------------------------------
+         */
+
+        long saveUserStart =
+                System.currentTimeMillis();
+
         ChatMessage userMessage =
-                ChatMessage.builder()
+                ChatMessage
+                        .builder()
                         .conversation(conversation)
-                        .senderType(SenderType.USER)
-                        .message(request.getMessage())
-                        .createdAt(LocalDateTime.now())
+                        .senderType(
+                                SenderType.USER
+                        )
+                        .message(
+                                request.getMessage()
+                        )
+                        .createdAt(
+                                LocalDateTime.now()
+                        )
                         .build();
 
         chatMessageRepository.save(
                 userMessage
         );
 
-        String prompt =
-                promptService.buildPrompt(
-                        user.getId(),
+        log.info(
+                "SAVE USER MESSAGE TIME: {} ms",
+                System.currentTimeMillis()
+                        - saveUserStart
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * AI RESPONSE
+         * ---------------------------------------------------------
+         */
+
+        long aiStart =
+                System.currentTimeMillis();
+
+        String aiResponse =
+                chatAiService.generateResponse(
+                        user,
+                        conversation,
                         request.getMessage()
                 );
 
-        String aiResponse =
-                aiService.generateResponse(
-                        prompt
-                );
+        long aiTime =
+                System.currentTimeMillis()
+                        - aiStart;
+
+        log.info(
+                "CHAT AI SERVICE TIME: {} ms",
+                aiTime
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * SAVE ASSISTANT MESSAGE
+         * ---------------------------------------------------------
+         */
+
+        long saveAssistantStart =
+                System.currentTimeMillis();
 
         ChatMessage assistantMessage =
-                ChatMessage.builder()
+                ChatMessage
+                        .builder()
                         .conversation(conversation)
-                        .senderType(SenderType.ASSISTANT)
-                        .message(aiResponse)
-                        .createdAt(LocalDateTime.now())
+                        .senderType(
+                                SenderType.ASSISTANT
+                        )
+                        .message(
+                                aiResponse
+                        )
+                        .createdAt(
+                                LocalDateTime.now()
+                        )
                         .build();
 
         chatMessageRepository.save(
                 assistantMessage
         );
+
+        log.info(
+                "SAVE ASSISTANT MESSAGE TIME: {} ms",
+                System.currentTimeMillis()
+                        - saveAssistantStart
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * UPDATE CONVERSATION
+         * ---------------------------------------------------------
+         */
 
         conversation.setUpdatedAt(
                 LocalDateTime.now()
@@ -186,10 +283,67 @@ public class ChatServiceImpl implements ChatService {
                 conversation
         );
 
+
+        /*
+         * ---------------------------------------------------------
+         * KNOWLEDGE PIPELINE
+         *
+         * Currently synchronous.
+         * We will make this asynchronous later because
+         * memory extraction should not delay the chat response.
+         * ---------------------------------------------------------
+         */
+
+        long pipelineStart =
+                System.currentTimeMillis();
+
+        try {
+
+            knowledgePipelineService
+                    .processInteraction(
+                            conversation.getId()
+                    );
+
+        } catch (Exception exception) {
+
+            log.error(
+                    "Knowledge pipeline failed for conversation {}",
+                    conversation.getId(),
+                    exception
+            );
+        }
+
+        long pipelineTime =
+                System.currentTimeMillis()
+                        - pipelineStart;
+
+        log.info(
+                "KNOWLEDGE PIPELINE TIME: {} ms",
+                pipelineTime
+        );
+
+
+        /*
+         * ---------------------------------------------------------
+         * TOTAL REQUEST TIME
+         * ---------------------------------------------------------
+         */
+
+        long totalTime =
+                System.currentTimeMillis()
+                        - totalStart;
+
+        log.info(
+                "TOTAL SEND MESSAGE TIME: {} ms",
+                totalTime
+        );
+
+
         return chatMessageMapper.toResponse(
                 assistantMessage
         );
     }
+
 
     @Override
     public void deleteConversation(

@@ -3,5 +3,9 @@ package com.garveshtiwari.spiritual_app_backend
 
 public interface ContextBuilder {
 
-    String buildContext(Long userId);
+    String buildContext(
+            Long userId,
+            Long conversationId,
+            String userMessage
+    );
 }

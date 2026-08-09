@@ -1,13 +1,23 @@
-package com.garveshtiwari.spiritual_app_backend.chat.controller;
+package com.garveshtiwari.spiritual_app_backend
+        .chat.controller;
 
-import com.garveshtiwari.spiritual_app_backend.chat.dto.ChatMessageRequest;
-import com.garveshtiwari.spiritual_app_backend.chat.dto.ChatMessageResponse;
-import com.garveshtiwari.spiritual_app_backend.chat.dto.ConversationRequest;
-import com.garveshtiwari.spiritual_app_backend.chat.dto.ConversationResponse;
-import com.garveshtiwari.spiritual_app_backend.chat.service.ChatService;
+import com.garveshtiwari.spiritual_app_backend
+        .chat.dto.ChatMessageRequest;
+import com.garveshtiwari.spiritual_app_backend
+        .chat.dto.ChatMessageResponse;
+import com.garveshtiwari.spiritual_app_backend
+        .chat.dto.ConversationRequest;
+import com.garveshtiwari.spiritual_app_backend
+        .chat.dto.ConversationResponse;
+import com.garveshtiwari.spiritual_app_backend
+        .chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
+
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -16,7 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatService chatService;
+    private final ChatService
+            chatService;
+
 
     @PostMapping("/conversations")
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,11 +41,13 @@ public class ChatController {
         );
     }
 
+
     @GetMapping("/conversations")
     public List<ConversationResponse> getConversations() {
 
         return chatService.getConversations();
     }
+
 
     @GetMapping(
             "/conversations/{conversationId}/messages"
@@ -46,6 +60,13 @@ public class ChatController {
                 conversationId
         );
     }
+
+
+    /*
+     * =========================================================
+     * EXISTING NORMAL CHAT ENDPOINT
+     * =========================================================
+     */
 
     @PostMapping(
             "/conversations/{conversationId}/messages"

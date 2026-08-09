@@ -1,6 +1,8 @@
-package com.garveshtiwari.spiritual_app_backend.intelligence.context.preference;
+package com.garveshtiwari.spiritual_app_backend
+        .intelligence.context.preference;
 
-import com.garveshtiwari.spiritual_app_backend.intelligence.context.ContextBuilder;
+import com.garveshtiwari.spiritual_app_backend
+        .intelligence.context.ContextBuilder;
 import com.garveshtiwari.spiritual_app_backend
         .preference.entity.UserPreference;
 import com.garveshtiwari.spiritual_app_backend
@@ -10,13 +12,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class PreferenceContextBuilder implements ContextBuilder {
+public class PreferenceContextBuilder
+        implements ContextBuilder {
 
     private final UserPreferenceRepository
             preferenceRepository;
 
+    @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
         UserPreference preference =
@@ -29,7 +35,7 @@ public class PreferenceContextBuilder implements ContextBuilder {
         }
 
         return """
-                User preferences
+                User preferences:
 
                 Language: %s
                 Theme: %s
@@ -37,6 +43,7 @@ public class PreferenceContextBuilder implements ContextBuilder {
                 Reminder time: %s
                 Sampradaya: %s
                 Voice type: %s
+
                 """
                 .formatted(
                         preference.getLanguage(),

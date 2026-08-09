@@ -13,6 +13,11 @@ public interface BookmarkRepository
             Long userId
     );
 
+    List<Bookmark> findByUserIdAndVerseIdIn(
+            Long userId,
+            List<Long> verseIds
+    );
+
     Optional<Bookmark> findByUserIdAndVerseId(
             Long userId,
             Long verseId

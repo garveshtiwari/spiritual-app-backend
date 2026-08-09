@@ -14,6 +14,10 @@ import java.time.LocalDateTime;
                 @Index(
                         name = "idx_document",
                         columnList = "document_source,document_id"
+                ),
+                @Index(
+                        name = "idx_book",
+                        columnList = "book_id"
                 )
         }
 )
@@ -42,6 +46,12 @@ public class KnowledgeEmbedding {
             nullable = false
     )
     private Long documentId;
+
+    @Column(
+            name = "book_id",
+            nullable = false
+    )
+    private Long bookId;
 
     @Column(nullable = false)
     private String title;

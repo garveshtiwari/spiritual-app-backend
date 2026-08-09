@@ -14,6 +14,11 @@ public interface ReadingHistoryRepository
             Long userId
     );
 
+    List<ReadingHistory> findByUserIdAndVerseIdIn(
+            Long userId,
+            List<Long> verseIds
+    );
+
     Optional<ReadingHistory> findByIdAndUserId(
             Long id,
             Long userId

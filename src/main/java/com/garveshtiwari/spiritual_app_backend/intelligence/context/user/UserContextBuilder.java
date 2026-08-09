@@ -15,16 +15,20 @@ import org.springframework.stereotype.Component;
 public class UserContextBuilder
         implements ContextBuilder {
 
-    private final UserRepository userRepository;
+    private final UserRepository
+            userRepository;
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
-        User user = userRepository
-                .findById(userId)
-                .orElse(null);
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElse(null);
 
         if (user == null) {
             return "";

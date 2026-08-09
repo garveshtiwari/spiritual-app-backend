@@ -1,9 +1,15 @@
-package com.garveshtiwari.spiritual_app_backend.intelligence.prompt.service;
+package com.garveshtiwari.spiritual_app_backend
+        .intelligence.prompt.service;
+
+import com.garveshtiwari.spiritual_app_backend
+        .intelligence.retrieval.dto.RetrievalResponse;
 
 public interface PromptService {
 
     String buildPrompt(
             Long userId,
-            String userMessage
+            Long conversationId,
+            String userMessage,
+            RetrievalResponse retrievalResponse
     );
 }

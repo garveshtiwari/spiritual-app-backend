@@ -4,16 +4,13 @@ package com.garveshtiwari.spiritual_app_backend
 import com.garveshtiwari.spiritual_app_backend
         .chat.entity.ChatMessage;
 import com.garveshtiwari.spiritual_app_backend
-        .chat.entity.Conversation;
-import com.garveshtiwari.spiritual_app_backend
-        .chat.repository.ChatMessageRepository;
-import com.garveshtiwari.spiritual_app_backend
-        .chat.repository.ConversationRepository;
-import com.garveshtiwari.spiritual_app_backend
         .intelligence.context.ContextBuilder;
+import com.garveshtiwari.spiritual_app_backend
+        .intelligence.memory.conversation.service.ConversationMemoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -21,54 +18,59 @@ import java.util.List;
 public class ChatContextBuilder
         implements ContextBuilder {
 
-    private static final int CONVERSATION_LIMIT = 1;
-
-    private final ConversationRepository
-            conversationRepository;
-
-    private final ChatMessageRepository
-            chatMessageRepository;
+    private final ConversationMemoryService
+            conversationMemoryService;
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
-        List<Conversation> conversations =
-                conversationRepository
-                        .findByUserIdOrderByUpdatedAtDesc(
-                                userId
-                        );
-
-        if (conversations.isEmpty()) {
+        if (conversationId == null) {
             return "";
         }
+
+        String summary =
+                conversationMemoryService
+                        .getSummary(
+                                conversationId
+                        );
+
+        List<ChatMessage> recentMessages =
+                conversationMemoryService
+                        .getRecentMessages(
+                                conversationId
+                        );
+
+        Collections.reverse(
+                recentMessages
+        );
 
         StringBuilder context =
                 new StringBuilder();
 
-        context.append("""
-                Previous conversation:
+        if (!summary.isBlank()) {
 
-                """);
+            context.append("""
+                    Conversation Summary:
 
-        int count = Math.min(
-                CONVERSATION_LIMIT,
-                conversations.size()
-        );
+                    """);
 
-        for (int i = 0; i < count; i++) {
+            context.append(summary)
+                    .append("\n\n");
+        }
 
-            Conversation conversation =
-                    conversations.get(i);
+        if (!recentMessages.isEmpty()) {
 
-            List<ChatMessage> messages =
-                    chatMessageRepository
-                            .findByConversationIdOrderByCreatedAtAsc(
-                                    conversation.getId()
-                            );
+            context.append("""
+                    Recent Messages:
 
-            for (ChatMessage message : messages) {
+                    """);
+
+            for (ChatMessage message :
+                    recentMessages) {
 
                 context.append(
                         message.getSenderType()

@@ -50,7 +50,9 @@ public class Bookmark {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 }

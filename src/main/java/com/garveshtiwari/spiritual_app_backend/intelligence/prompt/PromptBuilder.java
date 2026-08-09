@@ -1,5 +1,4 @@
-package com.garveshtiwari.spiritual_app_backend
-        .intelligence.prompt;
+package com.garveshtiwari.spiritual_app_backend.intelligence.prompt;
 
 public interface PromptBuilder {
 
@@ -9,6 +8,7 @@ public interface PromptBuilder {
 
     String buildPrompt(
             String context,
+            String retrievedKnowledge,
             String message
     );
 }

@@ -24,7 +24,9 @@ public class HistoryContextBuilder
 
     @Override
     public String buildContext(
-            Long userId
+            Long userId,
+            Long conversationId,
+            String userMessage
     ) {
 
         List<ReadingHistory> historyList =
@@ -55,21 +57,22 @@ public class HistoryContextBuilder
             ReadingHistory history =
                     historyList.get(i);
 
-            context.append(
-                    "Verse ID: "
-            ).append(
-                    history.getVerse().getId()
-            ).append(
-                    "\n"
-            );
+            context.append("Verse ID: ")
+                    .append(
+                            history
+                                    .getVerse()
+                                    .getId()
+                    )
+                    .append("\n");
 
             context.append(
-                    "Duration (seconds): "
-            ).append(
-                    history.getDurationInSeconds()
-            ).append(
-                    "\n\n"
-            );
+                            "Duration (seconds): "
+                    )
+                    .append(
+                            history
+                                    .getDurationInSeconds()
+                    )
+                    .append("\n\n");
         }
 
         return context.toString();

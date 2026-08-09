@@ -1,6 +1,7 @@
 package com.garveshtiwari.spiritual_app_backend
         .intelligence.llm.openai;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
@@ -15,6 +16,11 @@ public class OpenAiRequest {
     private String model;
 
     private List<Message> messages;
+
+    @JsonProperty("max_completion_tokens")
+    private Integer maxCompletionTokens;
+
+    private Boolean stream;
 
     @Getter
     @Setter

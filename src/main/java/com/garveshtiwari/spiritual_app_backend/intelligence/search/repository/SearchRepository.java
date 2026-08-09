@@ -9,6 +9,7 @@ public interface SearchRepository {
 
     List<SearchResult> search(
             String vector,
+            List<Long> preferredBookIds,
             Integer limit
     );
 }

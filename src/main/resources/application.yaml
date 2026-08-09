@@ -48,8 +48,19 @@ jwt:
 intelligence:
   provider: openai
 
+  ranking:
+    bookmark-boost: 0.10
+    reading-history-max-boost: 0.08
+    reading-history-max-duration: 300
+
+  memory:
+    recent-messages: 20
+    summary-threshold: 40
+    summary-version: 1
+
 openai:
   api-key: ${OPENAI_API_KEY}
   model: gpt-4.1-mini
   base-url: https://api.openai.com
   embedding-model: text-embedding-3-small
+

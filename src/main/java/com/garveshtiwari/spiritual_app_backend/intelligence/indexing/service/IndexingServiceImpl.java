@@ -158,6 +158,11 @@ public class IndexingServiceImpl
                 .documentId(
                         verse.getId()
                 )
+                .bookId(
+                        verse.getChapter()
+                                .getBook()
+                                .getId()
+                )
                 .title(
                         verse.getChapter()
                                 .getBook()

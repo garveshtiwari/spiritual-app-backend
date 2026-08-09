@@ -6,7 +6,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties({
         OpenAiProperties.class,
-        IntelligenceProperties.class
+        IntelligenceProperties.class,
+        RankingProperties.class,
+        MemoryProperties.class
 })
 public class IntelligenceConfiguration {
 }
